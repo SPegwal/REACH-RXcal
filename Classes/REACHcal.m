@@ -2077,7 +2077,7 @@ classdef REACHcal
 
         % Fitting error functions
         function err = err_RIA(obj,S11meas,S11model)
-            % err_RIA combines the real-imag and absolute parts of the difference error
+            % err_RIA combines complex and magnitude difference error
 
             obj.errorFuncScale = 'lin';
             err_complex = obj.err_complexDistance(S11meas,S11model);
@@ -2087,7 +2087,7 @@ classdef REACHcal
         end
 
         function err = err_complexDistance(obj,y_meas,y_model)
-            % err_complexDistance_dB provides the complex difference-based error in dB
+            % err_complexDistance provides the complex difference-based error
             
             dist = abs(y_meas(:) - y_model(:));
             err = obj.errFuncNormHandle(dist);
@@ -2095,7 +2095,7 @@ classdef REACHcal
         end
 
         function err = err_magDistance(obj,y_meas,y_model)
-            % err_magDistance provides the difference in magnitude error in dB
+            % err_magDistance provides the magnitude difference error
             
             dist = abs(abs(y_meas(:)) - abs(y_model(:)));
             err = obj.errFuncNormHandle(dist);

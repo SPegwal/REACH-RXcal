@@ -1485,7 +1485,7 @@ classdef REACHcal_1
                 case {'all'}
                     switch obj.optTypeFlag
                         case 1
-                            optElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','mts','sr_mtsj2','sr_mtsj1','c2','c10'};
+                            optElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','mts','sr_mtsj2','sr_mtsj1','sr_ms1j2','c2','c10','la'};
                         case 2
                             optElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','sr_mtsj2','c2','c10'};
                     end
