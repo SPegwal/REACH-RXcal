@@ -466,7 +466,9 @@ classdef REACHcal
 
 
     end
-
+    properties (Access = public,Constant = false)
+        counter(1,1) double {mustBeReal,mustBeNonnegative} = 0;
+    end
     properties (Constant = true)
         sourceNames = {'c12r36','c12r27','c12r69','c12r91','c25open','c25short','c25r10','c25r250','cold','hot','r25','r100','ant'}
         freqUnit = 'MHz'
@@ -1569,15 +1571,29 @@ classdef REACHcal
                     end
                 end
             end
-
+             persistent n
+             if isempty(n)
+                 n = 0;
+             end
+             n = n+1;
+             if (rem(n,2000) <= 25 || n == 1)
+%              if (n == 1)
+                 eV
+             end
+            w_ = obj.optW_RIA./norm(obj.optW_RIA,1);
+            for i=1:12
+                eV(i) = dB20(w_*[real(eV(i));imag(eV(i))]);
+            end
+            
             err_ = w(:).*eV;
             err_(w == 0) = -inf;
-            switch obj.errorFuncType
-                case 'RIA'
-                    err = dB20(rms(conv(real(err_),imag(err_))));
-                otherwise
-                    err = max(err_);    
-            end
+%             switch obj.errorFuncType
+%                 case 'RIA'
+%                     err = dB20(rms(conv(real(err_),imag(err_))));
+%                 otherwise
+%                     err = max(err_);    
+%             end
+            err = max(err_);
                         
         end
 
@@ -2079,10 +2095,23 @@ classdef REACHcal
         function err = err_RIA(obj,S11meas,S11model)
             % err_RIA combines complex and magnitude difference error
 
-            obj.errorFuncScale = 'lin';
-            err_complex = obj.err_complexDistance(S11meas,S11model);
-            err_mag = obj.err_magDistance(S11meas,S11model);
-            err = complex(err_mag,err_complex);
+%             obj.errorFuncScale = 'lin';
+%             err_complex = obj.err_complexDistance(S11meas,S11model);
+%             err_mag = obj.err_magDistance(S11meas,S11model);
+%             err = complex(err_mag,err_complex);
+
+            w = obj.optW_RIA./norm(obj.optW_RIA,1);
+
+            scaleHandle = @(x) x;
+            if strcmp(obj.errorFuncScale,'dB')
+                scaleHandle = obj.errFuncScaleHandle;
+                obj.errorFuncScale = 'lin';
+            end
+
+            err_complex = obj.errFuncNormHandle(obj.err_complexDistance(S11meas,S11model));
+            err_mag = obj.errFuncNormHandle(obj.err_magDistance(S11meas,S11model));
+%             err = scaleHandle(w*[err_complex;err_mag]);
+            err = complex(err_complex,err_mag);
 
         end
 

@@ -43,8 +43,6 @@ d.errorFuncNorm = 'mean';
 % d1 = d.optimConfig('custom',{'rCold','rHot','ms1','mts','sr_mtsj1','sr_mtsj2'},{'cold','hot'});
 
 d1 = d.optimConfig('all');
-
-
 d1 = d1.fitParams;
 
 figure (1)
@@ -53,35 +51,40 @@ d1.plotAllS11(3,{'r','k'});
 figure (2)
 d1.plotAllParameters('r*');
 
-%             f = 'Param_data';
-%             status = mkdir('Param_data');
-%             
-%             D = datetime('now');
-%             DD = num2str(D.Day);MM = num2str(D.Month);YY = num2str(D.Year);Tm = num2str(D.Minute);Ts = num2str(D.Second);
-%             f_name = ['P_list_on_',DD,MM,YY((length(YY)-2):length(YY)),'_',Tm,Ts((length(Ts)-2):length(Ts)),'.txt'];
-%             filenameD = fullfile(dpath,f,f_name);
-%             fileID = fopen(filenameD,'w');
-%             op_S = strings([1,(nonzeros(obj.optE))]);
-%             op_W = strings([1,(nonzeros(obj.optW))]);
-%             for i=1:length(obj.optE)
-%                 if obj.optE(i)
-%                     op_S(i) = obj.optVectElements{i};
-%                 end
-%             end
-%             
-%             for i=1:length(obj.optW)
-%                 if obj.optW(i)
-%                     op_W(i) = obj.optErrElements{i};
-%                 end
-%             end
-%             %  obj.([obj.optVectElements{ii},'_vals'])
-%             fprintf(fileID, 'Source elelments:\n %s\nError elements:\n%s',op_E,op_W);
-%             S_name = obj.op_S{i};
-%             fprintf(fileID, [obj.op_S{i}, ' = '], obj.([op_S{i},'_vals']));
-%             fprintf(fileID, 'SOURCE FILE:\n %s\nDESTINATION FILE:\n%s',filenameS,filenameD);
-%             fclose(fileID);
-%             fclose('all') ;
-%             r36.vals = [3.1968 14.6230 1.8546 36.6797]
-%             op_E(4),'.vals = ', ruu_vals
-%             form = '%10s.vals =  %10.5f';
-%             fprintf(form,ruu_vals);
+%     r36.vals = [3.36682      16.6829      3.17508      36.5441];
+%     r27.vals = [3.36572      16.6213      3.40096      26.9477];
+%     r69.vals = [2.39182       12.314      2.86407      70.0928];
+%     r91.vals = [2.69194        13.23      3.08641      93.6728];
+%     rOpen.vals = [6.23999      55.8218      2.33364     0.499767];
+%     rShort.vals = [14.0894      15.8454            0     0.310268];
+%     r10.vals = [11.1391      20.6975      34.1629      10.5331];
+%     r250.vals = [6.180626       10.8606      2.994377      255.5711];
+%     rCold.vals = [1.47681      4.59859     0.136854       50.117];
+%     rHot.vals = [4.10258      16.1162      2.66455      50.7057];
+%     r25.vals = [3.02442      12.7024      5.36143      24.6955];
+%     r100.vals = [3.46153      23.97875      1.586841      102.3916];
+%     ms1.vals = [50.1199      12.5556      1.76795    0.0431001      6.73987];
+%     ms3.vals = [50.1442      13.4723      1.70002   0.00501557      4.85029];
+%     ms4.vals = [63.4165      61.2629      2.26147     0.021221      1.94757];
+%     mts.vals = [56.6112      38.0539      1.62845    0.0672548      36.9309];
+%     sr_mtsj1.vals = [48.79104      122.8004      2.049572  0.0002516188      2.209656];
+%     sr_mtsj2.vals = [48.08656      124.1871      2.091847  0.0002454033     0.5108821];
+%     sr_ms1j2.vals = [52.33981      119.2792      2.050247  0.0002500653      1.005578];
+%     c2.vals = [49.2168      1.97913  -0.00822734      1.48692 -0.000435474   0.00666099   0.00682583     0.419599];
+%     c10.vals = [49.7207      9.93446   -0.0115154      1.41183  -0.00168004   0.00559357     0.228266     0.377085];
+%     la.vals = [51.4317      34.9882         2.05      0.00025     0.999966];
+%     
+%     d = REACHcal(dpath,'r36',r36,'r27',r27,'r69',r69,'r91',r91,...
+%                     'rOpen',rOpen,'rShort',rShort,'r10',r10,'r250',r250,...
+%                     'rCold',rCold,'rHot',rHot,'r25',r25,'r100',r100,...
+%                     'c2',c2,'c10',c10,...
+%                     'ms1',ms1,'ms3',ms3,'ms4',ms4','mts',mts,...
+%                     'sr_mtsj2',sr_mtsj2,'sr_mtsj1',sr_mtsj1,'sr_ms1j2',sr_ms1j2);
+%     d.errorFuncType = 'RIA';
+%     d.errorFuncNorm = 'mean';
+%     figure (1)
+%     d.plotAllS11(3,{'r','k'});
+%     
+%     figure (2)
+%     d.plotAllParameters('r*');
+
