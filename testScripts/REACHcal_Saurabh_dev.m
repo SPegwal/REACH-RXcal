@@ -1,7 +1,7 @@
 clc;
 close all;
 clearvars;
-
+% dpath = 'path to the data folder not in hdf5 format yet'
 % dpath='C:\Users\spegwal\Downloads\Saurabh\MAT_REPO\Repository\SPegwal\Calibration_code\REACH calibration\REACH-RXcal\data\2023_12_11_14_32\';
 dpath='C:\Users\spegwal\Downloads\Saurabh\MAT_REPO\Repository\SPegwal\Calibration_code\REACH calibration\REACH-RXcal\data\calibration\';
 d = REACHcal(dpath);
