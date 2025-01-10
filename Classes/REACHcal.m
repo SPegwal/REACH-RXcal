@@ -3,9 +3,11 @@ classdef REACHcal
     properties
         useMeasCableC10(1,1) logical = false
         useMeasCableC2(1,1) logical = false
-        errorFuncType(1,:) char {mustBeMember(errorFuncType,{'RIA','magDistance','complexDistance'})} = 'complexDistance' 
-        errorFuncNorm(1,:) char {mustBeMember(errorFuncNorm,{'max','mean','norm'})} = 'max'
+        errorFuncType(1,:) char {mustBeMember(errorFuncType,{'RIA','magDistance','complexDistance'})} = 'RIA' 
+        errorFuncNorm(1,:) char {mustBeMember(errorFuncNorm,{'max','mean','norm'})} = 'mean'
         errorFuncScale(1,:) char {mustBeMember(errorFuncScale,{'lin','dB'})} = 'dB'
+        customTemp_Flag(1,1) logical = false;
+        load_indx(1,1) {mustBeInteger} = 0;
     end
 
     properties (SetAccess = private)
@@ -20,161 +22,204 @@ classdef REACHcal
 
         % Resistors
         r36_vals(1,4) double {mustBeReal,mustBeNonnegative} = [0.9417 9.2008 2.3964 36.7446];
+        
+        r27_vals(1,4) double {mustBeReal,mustBeNonnegative} = [0.0522 8.4915 2.5690 27.1212];
+        
+        r69_vals(1,4) double {mustBeReal,mustBeNonnegative} = [2.2834 10.6514 1.0517 70.4520];
+        
+        r91_vals(1,4) double {mustBeReal,mustBeNonnegative} = [3.0632 11.9608 0.2749 93.9347];
+        
+        rOpen_vals(1,4) double {mustBeReal,mustBeNonnegative} = [8.3271 53.9266 6.2162 0.5013];
+        
+        rShort_vals(1,4) double {mustBeReal,mustBeNonnegative} = [18.6866 25.3791 0 0.2628];
+        
+        r10_vals(1,4) double {mustBeReal,mustBeNonnegative} = [6.6851 20.8037 20.1547 10.4524];
+        
+        r250_vals(1,4) double {mustBeReal,mustBeNonnegative} = [6.0418 23.9319 5.8821 254.8202];
+        
+        rCold_vals(1,4) double {mustBeReal,mustBeNonnegative} = [0.3876 2.0638 0.0537 50.2550];
+        
+        rHot_vals(1,4) double {mustBeReal,mustBeNonnegative} = [3.7886 9.7978 0.9865 50.8162];
+        
+        r25_vals(1,4) double {mustBeReal,mustBeNonnegative} = [16.1297 9.6251 5.2162 25.1860];
+        
+        r100_vals(1,4) double {mustBeReal,mustBeNonnegative} = [7.3128e-05 44.9274 2.6004 101.7963];
+        
+%         r36_vals(1,4) double {mustBeReal,mustBeNonnegative} = [2.95037      15.4809      3.47075      36.2407];
         r36_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
         r36_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,40,10,38];
         r36_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,34];
         r36_optFlag(1,4) logical = [1,1,1,1];
 
-        r27_vals(1,4) double {mustBeReal,mustBeNonnegative} = [0.0522 8.4915 2.5690 27.1212];
+%         r27_vals(1,4) double {mustBeReal,mustBeNonnegative} = [2.75893       15.149      4.16369      26.5982];
         r27_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
         r27_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,40,20,29];
         r27_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,25];
         r27_optFlag(1,4) logical = [1,1,1,1];
 
-        r69_vals(1,4) double {mustBeReal,mustBeNonnegative} = [2.2834 10.6514 1.0517 70.4520];
+%         r69_vals(1,4) double {mustBeReal,mustBeNonnegative} = [2.79087      13.7421      2.33215      70.2531];
         r69_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
         r69_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,60,20,72];
         r69_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,66];
         r69_optFlag(1,4) logical = [1,1,1,1];
 
-        r91_vals(1,4) double {mustBeReal,mustBeNonnegative} = [3.0632 11.9608 0.2749 93.9347];
+%         r91_vals(1,4) double {mustBeReal,mustBeNonnegative} = [3.80203      19.4249      2.07732      94.3578];
         r91_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
-        r91_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,80,20,95];
+        r91_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,80,20,98];
+%         r91_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,80,20,95];
         r91_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,86];
         r91_optFlag(1,4) logical = [1,1,1,1];
 
-        rOpen_vals(1,4) double {mustBeReal,mustBeNonnegative} = [8.3271 53.9266 6.2162 0.5013];
+%         rOpen_vals(1,4) double {mustBeReal,mustBeNonnegative} = [0.477354      63.9291      2.43312     0.991508];
         rOpen_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1e6];
-        rOpen_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,150,20,1];
-        rOpen_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,0.01];
+        rOpen_max(1,4) double {mustBeReal,mustBeNonnegative} = [10,150,20,2];
+%         rOpen_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,150,40,2];
+        rOpen_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,0.0];
         rOpen_optFlag(1,4) logical = [1,1,1,1];
 
-        rShort_vals(1,4) double {mustBeReal,mustBeNonnegative} = [18.6866 25.3791 0 0.2628];
+%         rShort_vals(1,4) double {mustBeReal,mustBeNonnegative} = [16.0045      8.64989      35.0109     0.313018];
         rShort_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
-        rShort_max(1,4) double {mustBeReal,mustBeNonnegative} = [50,80,200,10];
+        rShort_max(1,4) double {mustBeReal,mustBeNonnegative} = [50,80,200,2];
         rShort_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,0];
-        rShort_optFlag(1,4) logical = [1,1,0,1];
+        rShort_optFlag(1,4) logical = [1,1,1,1];
 
-        r10_vals(1,4) double {mustBeReal,mustBeNonnegative} = [6.6851 20.8037 20.1547 10.4524];
+%         r10_vals(1,4) double {mustBeReal,mustBeNonnegative} = [8.57682      13.5742      34.9511      10.4305];
         r10_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
-        r10_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,80,40,15];
+        r10_max(1,4) double {mustBeReal,mustBeNonnegative} = [30,60,80,15];
         r10_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,9];
         r10_optFlag(1,4) logical = [1,1,1,1];
 
-        r250_vals(1,4) double {mustBeReal,mustBeNonnegative} = [6.0418 23.9319 5.8821 254.8202];
+%         r250_vals(1,4) double {mustBeReal,mustBeNonnegative} = [3.252569       26.9557     0.7782909      252.4288];
         r250_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
-        r250_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,80,20,280];
+        r250_max(1,4) double {mustBeReal,mustBeNonnegative} = [30,60,20,280];
+%         r250_max(1,4) double {mustBeReal,mustBeNonnegative} = [30,60,80,280];
         r250_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,240];
         r250_optFlag(1,4) logical = [1,1,1,1];
 
-        rCold_vals(1,4) double {mustBeReal,mustBeNonnegative} = [0.3876 2.0638 0.0537 50.2550];
+%         rCold_vals(1,4) double {mustBeReal,mustBeNonnegative} = [1.24964      7.19233      1.25323      49.9668];
         rCold_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
-        rCold_max(1,4) double {mustBeReal,mustBeNonnegative} = [10,5,1,51];
-%         rCold_max(1,4) double {mustBeReal,mustBeNonnegative} = [1,5,1,51];
+        rCold_max(1,4) double {mustBeReal,mustBeNonnegative} = [10,10,5,51];
         rCold_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,49];
         rCold_optFlag(1,4) logical = [1,1,1,1];
 
-        rHot_vals(1,4) double {mustBeReal,mustBeNonnegative} = [3.7886 9.7978 0.9865 50.8162];
+%         rHot_vals(1,4) double {mustBeReal,mustBeNonnegative} = [3.81766      13.1934      2.07747      50.5746];
         rHot_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
-        rHot_max(1,4) double {mustBeReal,mustBeNonnegative} = [10,50,10,51];
-%         rHot_max(1,4) double {mustBeReal,mustBeNonnegative} = [10,20,10,51];
+        rHot_max(1,4) double {mustBeReal,mustBeNonnegative} = [10,30,10,51];
         rHot_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,49];
         rHot_optFlag(1,4) logical = [1,1,1,1];
 
-        r25_vals(1,4) double {mustBeReal,mustBeNonnegative} = [16.1297 9.6251 5.2162 25.1860];
+%         r25_vals(1,4) double {mustBeReal,mustBeNonnegative} = [4.14745      6.99092      6.94853      24.0367];
         r25_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
         r25_max(1,4) double {mustBeReal,mustBeNonnegative} = [20,80,20,27];
         r25_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,23];
         r25_optFlag(1,4) logical = [1,1,1,1];
 
-        r100_vals(1,4) double {mustBeReal,mustBeNonnegative} = [7.3128e-05 44.9274 2.6004 101.7963];
+%         r100_vals(1,4) double {mustBeReal,mustBeNonnegative} = [1.440879       34.5126      1.403432      104.6585];
         r100_unitScales(1,4) double {mustBeReal,mustBePositive} = [1e-12,1e-9,1e-12,1];
-        r100_max(1,4) double {mustBeReal,mustBeNonnegative} = [5,100,5,103];
+        r100_max(1,4) double {mustBeReal,mustBeNonnegative} = [5,100,5,107];
         r100_min(1,4) double {mustBeReal,mustBeNonnegative} = [0,0,0,97];
         r100_optFlag(1,4) logical = [1,1,1,1];
 
-
-        % Cables
-        c2_vals(1,8) double {mustBeReal} = [49.3959 1.9424 -0.0121 1.5443 0.0028 0.0098 0.0539 0.4794];
-        c2_unitScales(1,8) double {mustBeReal,mustBePositive} = [1,1,1,1,1,1,1,1];
-        c2_max(1,8) double {mustBeReal} = [52,2.1,0.1,1.6,0.003, 0.01,0.1,2];
-        c2_min(1,8) double {mustBeReal} = [48,1.9,-0.1,1.4,-0.003,0,-0.1,0];
-        c2_optFlag(1,8) logical = [1,1,1,1,1,1,1,1];
-%         c2_optFlag(1,8) logical = [1,1,0,1,1,1,0,1];
-
-        c10_vals(1,8) double {mustBeReal} = [50.1644 9.9486 -0.0467 1.4183 -0.0015 0.0066 0.0045 0.3985];
-        c10_unitScales(1,8) double {mustBeReal,mustBePositive} = [1,1,1,1,1,1,1,1];
-        c10_max(1,8) double {mustBeReal} = [52,10.1,0.1,1.6,0.003,0.01,0.5,2];
-%       c10_max(1,8) double {mustBeReal} = [52,10.1,0.1,1.6,0.003,0.01,0.1,2];
-        c10_min(1,8) double {mustBeReal} = [48,9.9,-0.1,1.4,-0.003,0,-0.1,0];
-        c10_optFlag(1,8) logical = [1,1,1,1,1,1,1,1];
-%         c10_optFlag(1,8) logical = [1,1,0,1,1,1,0,1];
+        % 48
 
         % Mechanical switches
-        ms1_vals(1,5) double {mustBeReal,mustBeNonnegative} = [51.7101 13.3335 1.7260 0 0];
+%         ms1_vals(1,5) double {mustBeReal,mustBeNonnegative} = [54.2236      16.2477      1.65338     0.178804      21.0181];
+        ms1_vals(1,5) double {mustBeReal,mustBeNonnegative} = [54.2236      16.2477      1.0     0.0      21.0181];
         ms1_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        ms1_max(1,5) double {mustBeReal,mustBeNonnegative} = [55,25,2.1,0.08,15];
-%       ms1_max(1,5) double {mustBeReal,mustBeNonnegative} = [55,25,2.1,0.02,15];
-        ms1_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,9,1.5,0,0];
-        ms1_optFlag(1,5) logical = [1,1,1,1,1];
-%         ms1_optFlag(1,5) logical = [1,1,1,0,0];
+        ms1_max(1,5) double {mustBeReal,mustBeNonnegative} = [55,25,2.1,0.20,25];
+        ms1_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,8,1.4,0,0];
+%         ms1_optFlag(1,5) logical = [1,1,1,1,1];
+        ms1_optFlag(1,5) logical = [1,1,0,0,1];
 
-        ms3_vals(1,5) double {mustBeReal,mustBeNonnegative} = [51.6292 16.5371 1.7421 0.0053 5.1893];
+%         ms3_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50.1024      13.2621      1.69958   0.00499467      4.58104];
+        ms3_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50.1024      13.2621      1.0   0.0      4.58104];
         ms3_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        ms3_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,18,1.9,0.01,10];
-        ms3_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,9,1.5,0,0];
-        ms3_optFlag(1,5) logical = [1,1,1,1,1];
-%         ms3_optFlag(1,5) logical = [1,1,1,0,0];
+        ms3_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,16,1.9,0.01,10];
+        ms3_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,10,1.5,0,0];
+%         ms3_optFlag(1,5) logical = [1,1,1,1,1];
+        ms3_optFlag(1,5) logical = [1,1,0,0,1];
 
-        ms4_vals(1,5) double {mustBeReal,mustBeNonnegative} = [57.5915 30.8591 2.2243 0.0903 4.9288];
+%         ms4_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50.2627      13.8227      1.70015   0.00500967      4.88799];
+        ms4_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50.2627      13.8227      1.00   0.0      4.88799];
         ms4_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        ms4_max(1,5) double {mustBeReal,mustBeNonnegative} = [70,120,3,0.2,10];
-        ms4_min(1,5) double {mustBeReal,mustBeNonnegative} = [47,9,1.5,0,0];
-        ms4_optFlag(1,5) logical = [1,1,1,1,1];
-%         ms4_optFlag(1,5) logical = [1,1,1,1,0];
+        ms4_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,16,1.9,0.01,10];
+        ms4_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,10,1.5,0,0];
+%         ms4_optFlag(1,5) logical = [1,1,1,1,1];
+        ms4_optFlag(1,5) logical = [1,0,0,0,1];
 
-        mts_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50.9304 58 1.6351 0.0059 3.9662];
+%         mts_vals(1,5) double {mustBeReal,mustBeNonnegative} = [57.1208      41.4039      1.54254     0.142959      50.3559];
+        mts_vals(1,5) double {mustBeReal,mustBeNonnegative} = [57.1208      41.4039      1.0     0.0      50.3559];
         mts_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        mts_max(1,5) double {mustBeReal,mustBeNonnegative} = [58,130,1.9,0.08,40];
-%       mts_max(1,5) double {mustBeReal,mustBeNonnegative} = [58,130,1.9,0.02,20];
-        mts_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,20,1.5,0,0];
-        mts_optFlag(1,5) logical = [1,1,1,1,1];
+        mts_max(1,5) double {mustBeReal,mustBeNonnegative} = [60,130,1.9,0.20,55];
+%         mts_max(1,5) double {mustBeReal,mustBeNonnegative} = [58,130,1.9,0.20,55];
+        mts_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,20,1.4,0,0];
+%         mts_optFlag(1,5) logical = [1,1,1,1,1];
+        mts_optFlag(1,5) logical = [1,1,0,0,1];
+
+        % 68
 
         % Semi-ridged links
-        sr_mtsj2_vals(1,5) double {mustBeReal,mustBeNonnegative} = [48.4377 125.1712 2.0504 0 0.9629];
-        sr_mtsj2_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        sr_mtsj2_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,130,2.2,0.0005,2];
-%       sr_mtsj2_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,130,2.1,0.0005,2];
-        sr_mtsj2_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,120,2.0,0,0];
-        sr_mtsj2_optFlag(1,5) logical = [1,1,1,1,1];
-%         sr_mtsj2_optFlag(1,5) logical = [1,1,1,0,1];
+        
+%         Z_sr(1,1) double {mustBeReal, mustBePositive} = [50];
+%         Z_sr_max(1,1) double {mustBeReal, mustBePositive} = [52];
+%         Z_sr_min(1,1) double {mustBeReal, mustBePositive} = [48];
+%         e_sr(1,1) double {mustBeReal, mustBePositive} = [2.1];
+%         e_sr_max(1,1) double {mustBeReal, mustBePositive} = [2.2];
+%         e_sr_min(1,1) double {mustBeReal, mustBePositive} = [2.0];
+%         New_val(1,1) double {mustBeReal, mustBePositive} = [50 52 48 2.1 2.2 2.0];
 
-        sr_mtsj1_vals(1,5) double {mustBeReal,mustBeNonnegative} = [49.2178 124.9098 2.0459 0 1.0101];
+        sr_mtsj1_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50      149.2564      2.1    0.00024821      3.997286];
         sr_mtsj1_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        sr_mtsj1_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,135,2.1,0.0005,8];
-%       sr_mtsj1_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,135,2.1,0.0005,2];
+        sr_mtsj1_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,155,2.2,0.0005,15];
         sr_mtsj1_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,115,2.0,0,0];
         sr_mtsj1_optFlag(1,5) logical = [1,1,1,1,1];
-%         sr_mtsj1_optFlag(1,5) logical = [1,1,1,0,1];
+        
+        sr_mtsj2_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50      125.5559      2.1  0.0002402758      0.322411];
+        sr_mtsj2_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
+        sr_mtsj2_max(1,5) double {mustBeReal,mustBeNonnegative} = [49,130,2.2,0.0005,8];
+%         sr_mtsj2_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,130,2.2,0.0005,15];
+        sr_mtsj2_min(1,5) double {mustBeReal,mustBeNonnegative} = [45,120,2.0,0,0];
+        sr_mtsj2_optFlag(1,5) logical = [1,1,1,1,1];
+%         sr_mtsj2_optFlag(1,5) logical = [0,1,0,0,0];
 
-%         sr_mtsj1_vals(1,8) double {mustBeReal} = [49.7610 125 -0.0118 2 -0.0014 0.0068 0.0074 0.4267];
-%         sr_mtsj1_unitScales(1,8) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1,1,1,1];
-%         sr_mtsj1_max(1,8) double {mustBeReal} = [52,135.1,0.1,2.2,0.1,0.01,0.1,2];
-%         sr_mtsj1_min(1,8) double {mustBeReal} = [48,115,-0.1,1.8,-0.1,0,-0.1,0];
-%         sr_mtsj1_optFlag(1,8) logical = [1,1,1,1,1,1,1,1];
-
-        sr_ms1j2_vals(1,5) double {mustBeReal,mustBeNonnegative} = [54.4476 114.7614 2.0523 2.9177e-04 1.0598];
+        sr_ms1j2_vals(1,5) double {mustBeReal,mustBeNonnegative} = [50      120.5823      2.1  0.0002500942      1.011841];
         sr_ms1j2_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        sr_ms1j2_max(1,5) double {mustBeReal,mustBeNonnegative} = [55,130,2.1,0.0005,2];
+        sr_ms1j2_max(1,5) double {mustBeReal,mustBeNonnegative} = [55,130,2.2,0.0005,2];
+%         sr_ms1j2_max(1,5) double {mustBeReal,mustBeNonnegative} = [52,130,2.2,0.0005,2];
         sr_ms1j2_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,110,2.0,0,0];
         sr_ms1j2_optFlag(1,5) logical = [1,1,1,1,1];
 
+        % 83
+
+
+        % Cables
+                                           %Zo           length   Eps_r_slope      Eps0    tand_slope    tand_const   r_prime_slope  r_prime_const
+%         c2_vals(1,8) double {mustBeReal} = [49.0346      1.95495  -0.00532681      1.46773  9.01329e-06   0.00522473    0.0035304     0.174154];
+        c2_vals(1,8) double {mustBeReal} = [49.0346      1.95495  -0.0      1.46773  0   0.00522473    0.0     0.174154];
+        c2_unitScales(1,8) double {mustBeReal,mustBePositive} = [1,1,1,1,1,1,1,1];
+        c2_max(1,8) double {mustBeReal} = [52,2.1,0.1,1.6,0.001, 0.02,0.1,0.8];
+        c2_min(1,8) double {mustBeReal} = [48,1.9,-0.1,1.4,-0.001,0,-0.1,0];
+%         c2_optFlag(1,8) logical = [1,1,1,1,1,1,1,1];
+        c2_optFlag(1,8) logical = [1,1,0,1,0,1,0,1];
+
+%         c10_vals(1,8) double {mustBeReal} = [49.4099      9.95695   -0.0107275      1.42526  -0.00169569   0.00472862     0.301096     0.286847];
+        c10_vals(1,8) double {mustBeReal} = [49.4099      9.95695   -0.0      1.42526  -0.0   0.00472862     0.0     0.286847];
+        c10_unitScales(1,8) double {mustBeReal,mustBePositive} = [1,1,1,1,1,1,1,1];
+        c10_max(1,8) double {mustBeReal} = [52, 10.1, 0.1, 1.6,  0.003, 0.01, 0.5, 1];
+        c10_min(1,8) double {mustBeReal} = [48, 9.9, -0.1, 1.4, -0.003,  0,    0.0, 0];
+%         c10_optFlag(1,8) logical = [1,1,1,1,1,1,1,1];
+        c10_optFlag(1,8) logical = [1,1,1,1,1,1,0,1];
+
+        % 99
+        
+
         % Lab adapter
-        la_vals(1,5) double {mustBeReal,mustBeNonnegative} = [48.084868835418405 10 2.050954767071014 2.490506108558774e-04 1.309184897853441];
+        la_vals(1,5) double {mustBeReal,mustBeNonnegative} = [52.383      68.9341         2.05      0.00025      1.03204];
         la_unitScales(1,5) double {mustBeReal,mustBePositive} = [1,1e-3,1,1,1];
-        la_max(1,5) double {mustBeReal,mustBeNonnegative} = [55,70,2.1,0.0005,2];
+        la_max(1,5) double {mustBeReal,mustBeNonnegative} = [55,75,2.1,0.0005,2];
         la_min(1,5) double {mustBeReal,mustBeNonnegative} = [48,5,2.0,0,0];
-        la_optFlag(1,5) logical = [1,1,1,1,1];
+%         la_optFlag(1,5) logical = [1,1,1,1,1];
+        la_optFlag(1,5) logical = [0,0,0,0,0];
 
         % Lab measurement phase shift (not used at present)
         ps_vals(1,1) double {mustBeReal,mustBeNonnegative} = [0];
@@ -183,36 +228,6 @@ classdef REACHcal
         ps_min(1,1) double {mustBeReal,mustBeNonnegative} = [0];
         ps_optFlag(1,1) logical = [0];
 
-        %         sr_mtsj2_vals = [48.8300 125.1396 0.0015 2.0486 -5.7059e-04 2.5002e-04 -9.5231e-05 0.9733];
-        %         sr_mtsj2_unitScales = [1,1e-3,1,1,1,1,1,1];
-        %         sr_mtsj2_max = [52,140,0.1,2.1,0.1,0.0005,0.1,2];
-        %         sr_mtsj2_min = [48,110,-0.1,2.0,-0.1,0,-0.1,0];
-        %         sr_mtsj2_optFlag = [1,1,1,1,1,1,1,1];
-        %
-        %         sr_mtsj1_vals = [49.4063 125.0864 -8.4874e-04 2.0482 -0.0069 2.5001e-04 -7.5998e-05 0.9702];
-        %         sr_mtsj1_unitScales = [1,1e-3,1,1,1,1,1,1];
-        %         sr_mtsj1_max = [52,140,0.1,2.1,0.1,0.0005,0.1,2];
-        %         sr_mtsj1_min = [48,110,-0.1,2.0,-0.1,0,-0.1,0];
-        %         sr_mtsj1_optFlag = [1,1,1,1,1,1,1,1];
-
-        %         % Adaptors (not used at present)
-        %         a_ms3_vals = [1.2110 0.0845 0.6999];
-        %         a_ms3_unitScales = [1e-12 1e-9 1e-12];
-        %         a_ms3_max = [3 1 2];
-        %         a_ms3_min = [0 0 0];
-        %         a_ms3_optFlag = [1 1 1];
-        %
-        %         a_ms1j7_vals = [1.2110 0.0845 0.6999];
-        %         a_ms1j7_unitScales = [1e-12 1e-9 1e-12];
-        %         a_ms1j7_max = [3 1 2];
-        %         a_ms1j7_min = [0 0 0];
-        %         a_ms1j7_optFlag = [1 1 1];
-        %
-        %         a_ms1_vals = [0 0 0] + eps;
-        %         a_ms1_unitScales = [1e-12 1e-9 1e-12];
-        %         a_ms1_max = [3 1 2];
-        %         a_ms1_min = [0 0 0];
-        %         a_ms1_optFlag = [1 1 1];
 
         % Measured Data
         S11_meas_c12r36
@@ -326,9 +341,6 @@ classdef REACHcal
         sr_ms1j2(1,1) struct
         la(1,1) struct
         ps(1,1) struct
-%         a_ms3(1,1) struct
-%         a_ms1j7(1,1) struct
-%         a_ms1(1,1) struct
 
         % Full source models - all the way to VNA cal plane
         Sc12r36(1,1) struct
@@ -484,6 +496,7 @@ classdef REACHcal
         outputElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','mts','sr_mtsj1','sr_mtsj2','sr_ms1j2','c2','c10'};
 
         validFieldsInputStruct = {'vals','unitScales','max','min','optFlag'};
+        Temp_el = {'r36','r27','r69','r91','open','short','r10','r250','cold','hot','r25','r100','ant','ms3','ms4','ms1','c2','c10','sr_mtsj2'};
     end
 
     methods
@@ -560,10 +573,6 @@ classdef REACHcal
             obj.S_meas_MS3_J2 = TwoPort.readTouchStone([obj.dataPathMS3,'P2_J2\J2_ON.s2p'],2,obj.freqHz);
             obj.S_meas_MS3_J3 = TwoPort.readTouchStone([obj.dataPathMS3,'P2_J3\J3_ON.s2p'],2,obj.freqHz);
             obj.S_meas_MS3_J4 = TwoPort.readTouchStone([obj.dataPathMS3,'P2_J4\J4_ON.s2p'],2,obj.freqHz);
-            %             obj.S_meas_MS3_J1 = TwoPort.readTouchStone([obj.dataPathMS3,'P2_J1\J1_ON.s2p']);
-            %             obj.S_meas_MS3_J2 = TwoPort.readTouchStone([obj.dataPathMS3,'P2_J2\J2_ON.s2p']);
-            %             obj.S_meas_MS3_J3 = TwoPort.readTouchStone([obj.dataPathMS3,'P2_J3\J3_ON.s2p']);
-            %             obj.S_meas_MS3_J4 = TwoPort.readTouchStone([obj.dataPathMS3,'P2_J4\J4_ON.s2p']);
             obj.S_meas_MS3_J1 = obj.S_meas_MS3_J1.freqChangeUnit(obj.freqUnit);
             obj.S_meas_MS3_J2 = obj.S_meas_MS3_J2.freqChangeUnit(obj.freqUnit);
             obj.S_meas_MS3_J3 = obj.S_meas_MS3_J3.freqChangeUnit(obj.freqUnit);
@@ -686,7 +695,7 @@ classdef REACHcal
 
         function sr_mtsj2 = get.sr_mtsj2(obj)
             sr_mtsj2 = obj.buildShortCableStruct(obj.sr_mtsj2_vals,obj.sr_mtsj2_unitScales,obj.sr_mtsj2_max,obj.sr_mtsj2_min,obj.sr_mtsj2_optFlag);
-            %             sr_mtsj2 = obj.buildCableStruct(obj.sr_mtsj2_vals,obj.sr_mtsj2_unitScales,obj.sr_mtsj2_max,obj.sr_mtsj2_min,obj.sr_mtsj2_optFlag);
+%             sr_mtsj2 = obj.buildCableStruct(obj.sr_mtsj2_vals,obj.sr_mtsj2_unitScales,obj.sr_mtsj2_max,obj.sr_mtsj2_min,obj.sr_mtsj2_optFlag);
         end
 
         function sr_ms1j2 = get.sr_ms1j2(obj)
@@ -1208,13 +1217,14 @@ classdef REACHcal
                     element_.optFlag;...
                     1:obj.optVect_Nvars(ii)];
             end
-            optStruct.vals = valMat(1,:);
+            optStruct.vals = valMat(1,:); 
             optStruct.max = valMat(2,:);
             optStruct.min = valMat(3,:);
             optStruct.optFlag = valMat(4,:);
             optStruct.elementNames = elementNames;
             optStruct.parameterNames = parameterNames;
             optStruct.parameterIndex = valMat(5,:);
+
         end
 
         % Measurement data
@@ -1490,7 +1500,8 @@ classdef REACHcal
                 case {'all'}
                     switch obj.optTypeFlag
                         case 1
-                            optElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','mts','sr_mtsj2','sr_mtsj1','sr_ms1j2','c2','c10','la'};
+%                             optElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','mts','sr_mtsj2','sr_mtsj1','sr_ms1j2','c2','c10'};
+                            optElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','mts','sr_mtsj2','sr_mtsj1','sr_ms1j2','c2','c10'};
                         case 2
                             optElements = {'r36','r27','r69','r91','rOpen','rShort','r10','r250','rCold','rHot','r25','r100','ms1','ms3','ms4','sr_mtsj2','c2','c10'};
                     end
@@ -1529,13 +1540,14 @@ classdef REACHcal
             if nargin < 2 || isempty(solver), solver = 'fmincon'; end
 
             idx = find(obj.optStruct.optFlag == 1);
+
             X0 = obj.optStruct.vals(idx);
             LB = obj.optStruct.min(idx);
             UB = obj.optStruct.max(idx);
 
             switch lower(solver)
                 case 'fmincon'
-                    if nargin < 3 || isempty(options), options = optimoptions('fmincon','display','iter','MaxFunctionEvaluations',30000); end
+                    if nargin < 3 || isempty(options), options = optimoptions('fmincon','display','iter','MaxFunctionEvaluations',20000); end
                     optVals = fmincon(@(x) errFunc(obj,x),X0,[],[],[],[],LB,UB,[],options);
                 case 'ga'
                     if nargin < 3 || isempty(options), options = optimoptions('ga','display','iter'); end
@@ -1552,7 +1564,14 @@ classdef REACHcal
 
             X = obj.optStruct.vals;
             X(obj.optStruct.optFlag == 1) = x;
-
+            
+%             X(99) = X(91); % Rprime for c2 & c10 
+%             X(97) = X(89); % tanD for c2 & c10
+%             X(95) = X(87); % epsilon for c2 & c10
+            X(60) = X(55); % lengths of MS3-4
+%             X(76) = X(71); % epsilon for 2 semirigids
+%             X(77) = X(72); % tanD for 2 semirigids
+%             X(78) = X(73); % Rprime for 2 semirigids
             for ii = 1:obj.optVect_Ne
                 obj.([obj.optVectElements{ii},'_vals']) = X((sum(obj.optVect_Nvars(1:(ii-1)))+1):sum(obj.optVect_Nvars(1:ii)));
             end
@@ -1571,29 +1590,40 @@ classdef REACHcal
                     end
                 end
             end
-             persistent n
-             if isempty(n)
-                 n = 0;
-             end
-             n = n+1;
-             if (rem(n,2000) <= 25 || n == 1)
-%              if (n == 1)
-                 eV
-             end
-            w_ = obj.optW_RIA./norm(obj.optW_RIA,1);
-            for i=1:12
-                eV(i) = dB20(w_*[real(eV(i));imag(eV(i))]);
-            end
             
-            err_ = w(:).*eV;
-            err_(w == 0) = -inf;
-%             switch obj.errorFuncType
-%                 case 'RIA'
-%                     err = dB20(rms(conv(real(err_),imag(err_))));
-%                 otherwise
-%                     err = max(err_);    
+%              persistent n
+%              if isempty(n)
+%                  n = 0;
+%              end
+%              
+%              n = n+1;
+%              
+%              if (rem(n,1000) <= 5 || n == 1)
+%                  eV
+% 
+%              end
+
+%             w_ = obj.optW_RIA./norm(obj.optW_RIA,1);
+%             w_ = [0.50 0.50];
+%             eV_=zeros(12,1);
+%             for i=1:12
+%                 eV_(i,1) = w_*[imag(eV(i));real(eV(i))]; %  err = complex(err_complex,err_mag);
 %             end
-            err = max(err_);
+%             length(eV)
+%             eV
+            err_ = w(:).*eV;
+%             err_ = w(:).*eV_;
+            err_(w == 0) = -inf;
+            
+            switch obj.errorFuncType
+                case 'RIA'
+                    err = dB20(rms(conv(real(err_),imag(err_))));
+%                     err = dB20(rms((real(err_)).*(imag(err_))));
+%                     err = dB20(rms(err_));
+                otherwise
+                    err = (max(err_));    
+            end
+%             err = max(err_);
                         
         end
 
@@ -1659,8 +1689,8 @@ classdef REACHcal
         % Parameter sweeps
         function [] = paramSweep(obj)
             % PARAMSWEEP does a 1D parameters sweep on all the parameters
-
-            Nsweep = 11;
+            persweep_nom = 0.1; % percentage of variation from nominal parameters
+            Nsweep = 3;
             Nerr = length(obj.optErrElements);
             Npar = length(obj.optStruct.parameterNames);
 
@@ -1670,87 +1700,283 @@ classdef REACHcal
             end
             obj.optTypeFlag = 1;
 
-            parNom = obj.optStruct.vals;  
+            % Nominal Parameter space equivalent errrors and temp space
+            parNom = obj.optStruct.vals;
             [errNomMag,errNomComplex] = deal(nan(1,Nerr));
             Tnom = nan(obj.Nf,Nerr);
+            obj.errorFuncScale = 'lin';
             for ii = 1:Nerr
                 errNomMag(1,ii) = obj.err_magDistance(obj.(['S11_meas_',obj.optErrElements{ii}]),obj.(['S',obj.optErrElements{ii}]).network.getS.d11);
                 errNomComplex(1,ii) = obj.err_complexDistance(obj.(['S11_meas_',obj.optErrElements{ii}]),obj.(['S',obj.optErrElements{ii}]).network.getS.d11);
-%                 errNomMag(1,ii) = obj.(['err_source_',obj.optErrElements{ii}]);
                 Tnom(:,ii) = obj.(['T',obj.optErrElements{ii}]);
             end
-            errFuncNom = obj.errFunc(obj.optStruct.vals);
-            h = waitbar(0,'Calculating parameter sweep...');
+
+
+            Mag_TH = dB20((1+persweep_nom).*errNomMag); % Mag_error threshold
+            Cmplx_TH = dB20(errNomComplex + 0.1.*errNomComplex); % Cmplx_error threshold
+            Indx_Mpar = ones(Npar,Nsweep,Nerr); % index of the parameter only affecting temp
+            Indx_Cpar = ones(Npar,Nsweep,Nerr); % index of the parameter only affecting temp
+
+            obj.errorFuncScale = 'dB';
+
+            % h = waitbar(0,'Calculating parameter sweep...');
             count = 0;
             [errMagVals,errComplexVals,Tdelta] = deal(nan(Npar,Nsweep,Nerr));
             errFuncVals = nan(Npar,Nsweep);
             Tvals = nan(Npar,Nsweep,Nerr,obj.Nf);
+            par_space = nan(Npar,Nsweep);
+            par_Pvar = 0.1;% parameter value percentage variation
+
             for aa = 1:Npar
                 count = count + 1;
-                waitbar(aa/Npar,h)
+                %                 waitbar(aa/Npar,h)
                 el = obj.optStruct.elementNames{aa};
-                parMin = obj.optStruct.min(aa);
-                parMax = obj.optStruct.max(aa);
+
+        
+
+                parMin = obj.optStruct.vals(aa) - abs(par_Pvar.*(obj.optStruct.vals(aa))); % percent variation of optimal parameter values minima
+                parMax = obj.optStruct.vals(aa) + abs(par_Pvar.*(obj.optStruct.vals(aa))); % percent variation of optimal parameter values maxima
+
 
                 parVals = linspace(parMin,parMax,Nsweep);
+                par_space(aa,:) = parVals;
+
                 for bb = 1:Nsweep
                     obj.([el,'_vals'])(obj.optStruct.parameterIndex(aa)) = parVals(bb);
                     for cc = 1:Nerr
                         optEl = obj.optErrElements{cc};
-%                         errMagVals(aa,bb,cc) = obj.(['err_source_',optEl]);
                         errMagVals(aa,bb,cc) = obj.err_magDistance(obj.(['S11_meas_',optEl]),obj.(['S',optEl]).network.getS.d11);
                         errComplexVals(aa,bb,cc) = obj.err_complexDistance(obj.(['S11_meas_',optEl]),obj.(['S',optEl]).network.getS.d11);
                         Tvals(aa,bb,cc,:) = obj.(['T',optEl]);
                         Tdelta(aa,bb,cc) = max(abs(Tnom(:,cc) - squeeze(Tvals(aa,bb,cc,:))));
+                        if errMagVals(aa,bb,cc) <= Mag_TH(cc) && Tdelta(aa,bb,cc) > 0.001
+                            Indx_Mpar(aa,bb,cc) = NaN;
+                        end
+                        if errComplexVals(aa,bb,cc) <= Cmplx_TH(cc) && Tdelta(aa,bb,cc) > 0.001
+                            Indx_Cpar(aa,bb,cc) = NaN;
+                        end
                     end
-                    
+
                     errFuncVals(aa,bb) = obj.errFunc(obj.optStruct.vals);
                 end
                 % Reset back to the nominal value
                 obj.([el,'_vals'])(obj.optStruct.parameterIndex(aa)) = parNom(aa);
             end
 
+% *****************************************************
+%             % Plotting the delta_temp vs the error_mag/complx for a %age variation of the parameter space
+            for k = 1:Nerr
+                for j = 1:Nsweep
+                    for i = 1:Npar
+                        dt = squeeze(Tvals(i,j,k,:));
+                        figure(555)
+                        hold on; grid on;
+                        subplot(3,4,k);
+                        plot(obj.freq,dt,'r');
+                        title([obj.optErrElements{k}]);
+
+                        %                         waitbar((k-1)/Nerr,h);
+                    end
+                    %                     waitbar((k-1)/Nerr,h,['Plotting Source',obj.optErrElements{k},'...',num2str((j*100)/Nsweep),'%']);
+                end
+                %                 waitbar(k/Nerr,h);
+            end
+            for i=1:Nerr
+                figure(555)
+                subplot(3,4,i)
+                plot(obj.freq,Tnom(:,i),'b',LineWidth=1.2);
+                hold on; grid on;
+            end
+% *****************************************************
+            errMagVals_ = errMagVals.*Indx_Mpar; % Mag_error values excluding parameters only affecting delta temp
+            errComplexVals_ = errComplexVals.*Indx_Cpar; % Cmplx_error excluding parameters only affecting delta temp
+            Indx_MTemp = isnan(Indx_Mpar); % Mag_err Indexing of parameter only affecting delta temp
+            Indx_CTemp = isnan(Indx_Cpar); % Cmplx_err Indexing of parameter only affecting delta temp
+            [par_Mspace, par_Cspace] = deal(repmat(par_space,1,1,Nerr));
+
+            par_Mspace = ((par_Mspace./repmat(parNom(:),1,Nsweep,Nerr))-0).*Indx_MTemp;% Normalised Mag_err w.r.t. nominal parameters only affecting delta temp
+            par_Cspace = ((par_Cspace./repmat(parNom(:),1,Nsweep,Nerr))-0).*Indx_CTemp;% Normalised Cmplx_err w.r.t. nominal parameters only affecting delta temp
+
+
+
+% *****************************************************
+            % Plotting all the parameters not affecting the error calculation
+            [labels1, labels2] = deal(cell(1,Npar));
+            for j = 1:Nsweep
+                cntr = 1;
+                for k = 1:length(obj.optVectElements)
+                    switch lower(obj.optVectElements{k}(1))
+                        case 'r'
+                            lbl = obj.rVarNames;
+                        case {'m','s','l'}
+                            lbl = obj.cShortVarNames;
+                        case {'c'}
+                            lbl = obj.cVarNames;
+                        case 'a'
+                            lbl = obj.adaptVarNames;
+                    end
+
+                    labels1(cntr:(cntr+length(lbl)-1)) = (lbl);
+                    labels2(cntr) =  obj.optVectElements(k);
+                    cntr = cntr+length(lbl);
+                end
+            end
+
+            pp_M = reshape(par_Mspace,[Npar,Nsweep*Nerr]);
+            pp_C = reshape(par_Cspace,[Npar,Nsweep*Nerr]);
+            label_par = cell(1,Nsweep*length(obj.optErrElements));
+            c_j = 1;
+
+            for i=1:Nsweep:length(label_par)
+                    label_par(i) = obj.optErrElements(c_j);
+            end
+
+            figure
+            bar3(pp_M);
+            ax = gca;
+            ax.XTick = 1:1:length(label_par);
+            ax.XTickLabel = label_par;
+            ax.YTick = 1:1:length(labels1);
+            ax.YTickLabel = labels1;
+            ax.Title.String = 'Parameter space around nominal values affecting only Temp calculations but not mag error fucntion ';
+            
+
+            xx = reshape(repmat(ax.XTick,length(ax.YTick),1),[Nsweep*Nerr*Npar 1]);
+            yy = reshape(repmat(ax.YTick,length(ax.XTick),1)',[Nsweep*Nerr*Npar 1]);
+            label_n = repmat(obj.optStruct.elementNames',1,Nerr*Nsweep);
+
+            for i = 1:Npar
+                for j = 1:Nsweep*Nerr
+                    if pp_M(i,j) == 0 || isnan(pp_M(i,j))
+                        label_n(i,j) = {''};
+                    end
+
+                end
+
+            end
+
+            text(xx, yy, pp_M(:)+0.01, label_n,'Color','r','FontWeight','bold', 'HorizontalAlignment','center', 'VerticalAlignment','bottom')
+
+%             figure
+%             bar3(pp_C);
+%             ax = gca;
+%             ax.XTick = 1:1:length(label_par);
+%             ax.XTickLabel = label_par;
+%             ax.YTick = 1:1:length(labels1);
+%             ax.YTickLabel = labels1;
+%             ax.Title.String = 'Parameter space around nominal values affecting only Temp calculations but not cmplx error fucntion ';
+
+% *****************************************************
+            % Plotting the parameters not affecting the error calculation Source-wise
+
+%             ax = zeros(Nsweep,1);
+            for i = 1:Nerr
+                figure(50+i);
+                title(obj.optErrElements{i},'position',[Npar/2,1.03,0]);
+                for j = 1:Nsweep
+
+                    y1 = par_Mspace(:,j,i); % (npar,nsweep,nerr)
+                    y2 = par_Cspace(:,j,i);
+                    x1 = (1:1:104)';
+                    Mlines = [x1 x1 y1 zeros(size(x1))];
+
+                    Mlines = mat2cell(Mlines, ones(numel(x1),1), [2 2])';
+                    Mlines(3,:) = {'b'};
+                    subplot(Nsweep,1,j);
+                    plot(Mlines{:});
+                    hold on;
+                    ax = gca;
+                    ax.XLim = [0 105];
+                    ax.XTick = 1:Npar;
+                    ax.XTickLabel = labels1;
+                    ax.XAxisLocation = 'bottom';
+                    xline(find(~cellfun(@isempty,labels2)),'--k','linewidth',0.4);
+
+                    if isnan(nonzeros(y1))                        
+                        txt = ['  Sweep ' num2str(j) '  (Nominal values)'];                         
+                    else
+                        txt = ['  Sweep ' num2str(j)];                         
+                    end
+                    text(max(ax.XTick)+1,(max(abs(ax.YTick))-min(abs((ax.YTick))))/2,txt,interpreter='none');
+                    text(ax.XTick,ones(length(ax.XTick),1).*(max(ax.YTick)-0.05) ...
+                        ,labels2,'color','r',fontsize=10,fontweight='bold',interpreter='none');
+                end
+            end
+% *****************************************************
+            % Plotting error distance vs delta temp with and without parameters affecting error fucntion
+            for ii = 1:Nerr
+                for jj = 1:Nsweep
+                    y = squeeze(Tdelta(:,jj,ii));
+                    x = squeeze(errMagVals(:,jj,ii));
+                    x_ = squeeze(errMagVals_(:,jj,ii));
+                    x1 = squeeze(errComplexVals(:,jj,ii));
+                    x1_ = squeeze(errComplexVals_(:,jj,ii));
+                    figure(333)
+                    subplot(3,4,ii)
+                    sz = 40;
+                    scatter(x,y,sz,"b");
+                    hold on; grid on;
+                    title([obj.optErrElements{ii}]);
+                    sgtitle('Mag err vs delta temp');
+                    figure(444)
+                    subplot(3,4,ii)
+                    scatter(x1,y,sz,"r");
+                    hold on; grid on;
+                    title([obj.optErrElements{ii}]);
+                    sgtitle('Cmplx err vs delta temp');
+
+                    figure(33)
+                    subplot(3,4,ii)
+                    sz = 40;
+                    scatter(x_,y,sz,"b");
+                    hold on; grid on;
+                    title([obj.optErrElements{ii}]);
+                    sgtitle('Mag err vs delta temp w/o parameters affecting the error function');
+                    figure(44)
+                    subplot(3,4,ii)
+                    scatter(x1_,y,sz,"r");
+                    hold on; grid on;
+                    title([obj.optErrElements{ii}]);
+                    sgtitle('Cmplx err vs delta temp w/o parameters affecting the error function');
+                end
+            end
+% *****************************************************
             labels = obj.optStruct.parameterNames;
             for jj = 1:length(obj.optStruct.parameterNames)
                 labels{jj} = strrep(labels{jj},'_','\_');
             end
 
+            errRIA_nom = dB20(rms(conv(10.^(errNomMag./20),10.^(errNomComplex./20))));
+            errFuncNom = obj.errFunc(obj.optStruct.vals);
+% *****************************************************
+            % plotting sesitive analysis-- parameter variation for specific source
+            % affecting temperature calculation
             for ee = 1:Nerr + 1
                 errPlot = ee;
                 figure
                 grid on, hold on
                 if errPlot > Nerr
-                    yline(errFuncNom,'b')
-                    plot(repmat(1:Npar,Nsweep,1),errFuncVals.','b.-')
-                    title(['Error source: obj.errFunc'])
+                    yline(errFuncNom,'b');yline(errRIA_nom,'k');
+                    plot(repmat(1:Npar,Nsweep,1),errFuncVals.','b.-');%,repmat(1:Npar,Nsweep,1),errRIAVals.','k.-');
+                    title('Error source: obj.errFunc');
                 else
-%                     errMax = reshape([errVals(:,:,errPlot).max],size(errVals,1),size(errVals,2));
-%                     errMean = reshape([errVals(:,:,errPlot).mean],size(errVals,1),size(errVals,2));
-%                     errNorm = reshape([errVals(:,:,errPlot).norm],size(errVals,1),size(errVals,2));
-                    
-%                     pMax = yline(errNom(errPlot).max,'b');
-%                     pMean = yline(errNom(errPlot).mean,'r');
-%                     pNorm = yline(errNom(errPlot).norm,'m');
-%                     plot(repmat(1:Npar,Nsweep,1),errMax.','b.-')
-%                     plot(repmat(1:Npar,Nsweep,1),errMean.','r.-')
-%                     plot(repmat(1:Npar,Nsweep,1),errNorm.','m.-')
 
                     subplot(2,1,1)
                     grid on, hold on
-%                     err = reshape([errMagVals(:,:,errPlot)],size(errMagVals,1),size(errMagVals,2));
+
                     errM = reshape([errMagVals(:,:,errPlot)],Npar,Nsweep);
                     pM = yline(errNomMag(errPlot),'b');
                     plot(repmat(1:Npar,Nsweep,1),errM.','b.-')
+
                     errC = reshape([errComplexVals(:,:,errPlot)],Npar,Nsweep);
                     pC = yline(errNomComplex(errPlot),'r');
                     plot(repmat(1:Npar,Nsweep,1),errC.','r.-')
                     title(['Error source: ',obj.optErrElements{errPlot}])
+
                     subplot(2,1,2)
                     grid on, hold on
                     Tscale = 1000;
-%                     T = reshape([Tdelta(:,:,errPlot)],size(errMagVals,1),size(errMagVals,2)).*Tscale;
                     T = reshape([Tdelta(:,:,errPlot)],Npar,Nsweep).*Tscale;
-%                     t = yline(Tnom(errPlot).*Tscale,'b');
                     plot(repmat(1:Npar,Nsweep,1),T.','b.-')
                     ylabel('T_\Delta (mK)')
                 end
@@ -1769,11 +1995,12 @@ classdef REACHcal
                     legend([pM,pC],{'Magnitude','Complex Distance'})
                 end
             end
-            
-            delete(h);
+
+%             delete(h);
 %             keyboard
-            
+% *****************************************************
         end
+
 
         % Output
         function writeTouchStone(obj,path)
@@ -1923,9 +2150,10 @@ classdef REACHcal
             % PLOTALLS11 plots all the S11 responses on the current figure
 
             % plotFlag: 1 = model; 2 = measure; 3 = both
-
+% leg = 1;
             if nargin < 2 || isempty(plotFlag), plotFlag = 3; end
             if nargin < 3 || isempty(style), style = 'k'; end
+            
 
             if ~iscell(style), style = {style,style}; end
             if plotFlag == 3, style = {'r','k'}; end
@@ -1936,25 +2164,34 @@ classdef REACHcal
                 row1 = floor((ii-1)/4);
                 col1 = mod((ii-1),4);
 
-                subplot(8,8,(2*row1*8 + [1:2] + 2*col1))
+                subplot(8,8,(2*row1*8 + (1:2) + 2*col1))
                 grid on, hold on
                 if ii < length(obj.sourceNames)
+%                     obj.errorFuncType = 'magDistance';% complexDistance
                     eV = obj.(['err_source_',obj.sourceNames{ii}]);
-                    title([obj.sourceNames{ii},'; ',obj.errorFuncType,':Mag dist err = ',num2str(dB20(real(eV))), ' dB']);
+%                     optVectElements
+                    title([obj.sourceNames{ii},'; ',obj.errorFuncType,':Mag dist err = ',num2str(dB20(imag(eV))), ' dB']);
+%                     title([obj.sourceNames{ii},'; ',obj.errorFuncType,':Mag dist err = ',num2str(dB20((eV))), ' dB']);
                     Smod = obj.(['S',obj.sourceNames{ii}]);
                 end
+%                 obj.errorFuncType = "complexDistance";
+%                 eV1 = obj.(['err_source_',obj.sourceNames{ii}]);
+
                 if mod(plotFlag,2) ~= 0 && ii < length(obj.sourceNames), Smod.network.getS.plot11dB(style{1}); end
-                if plotFlag > 1, plot(obj.freq,dB20(measVals),style{2}); end
+                if plotFlag > 1 , plot(obj.freq,dB20(measVals),style{2});end
+
+                
                 xlabel('')
                 subplot(8,8,((2*row1+1)*8 + 1 + 2*col1))
                 grid on, hold on
-                title(['Cmplx dist err = ',num2str(dB20(imag(eV)))]);
+                title(['Cmplx dist err = ',num2str(dB20(real(eV)))]);
+%                 title(['Cmplx dist err = ',num2str(dB20((eV1)))]);
                 if mod(plotFlag,2) ~= 0 && ii < length(obj.sourceNames), Smod.network.getS.plot11real(style{1}); end
                 if plotFlag > 1, plot(obj.freq,real(measVals),style{2}); end
                 xlabel('')
                 subplot(8,8,((2*row1+1)*8 + 2 + 2*col1))
                 grid on, hold on
-                title(['Cmplx dist err = ',num2str(dB20(imag(eV)))]);
+                title(['Cmplx dist err = ',num2str(dB20(real(eV)))]);
                 if mod(plotFlag,2) ~= 0 && ii < length(obj.sourceNames), Smod.network.getS.plot11imag(style{1}); end
                 if plotFlag > 1, plot(obj.freq,imag(measVals),style{2}); end
                 xlabel('')
@@ -2009,27 +2246,54 @@ classdef REACHcal
             end
         end
 
-        function plotAllTemperatures(obj,color)
+        function plotAllTemperatures(obj,color,legends,custom)
             % plotAllTemperatures plots all the source temperatures at the reference plain
+            % custom -> Calibrator chains with less no. of elements or selective elements 
+            % can be plotted (always define custom calibrator chains from source side)
+            cTemp_indx = 0;
+            if nargin < 2 || isempty(color), color = 'k';  end
+            if nargin < 3 || isempty(legends), legends = {'T_{source}','T_r','T_{cab}'}; end
+            if nargin > 3 && ~isempty(custom)
+                obj.customTemp_Flag = true;
+                if nnz(ismember(custom,obj.Temp_el)) == length(custom) && nnz(ismember(custom,obj.Temp_el(1:12))) == 1
+                    cTemp_indx = find(contains(obj.sourceNames,custom(1)));
+                    obj.load_indx = find(contains(obj.Temp_el,custom(1)));
+                else
+                    error('error...custom temp chain is not correct');
+                end
 
-            if nargin < 2 || isempty(color), color = 'k'; end
+            end
+
 
             for ii = 1:length(obj.sourceNames)-1
                 subplot(3,4,ii)
                 grid on, hold on
 
-                [~,Tr,Tcab] = obj.calcSourceTemp(obj.sourceNames{ii});
+                [y,Tr,Tcab] = obj.calcSourceTemp(obj.sourceNames{ii});
 
-                y = obj.(['T',obj.sourceNames{ii}]);
+                if ii == cTemp_indx
+                    G = calcSourceGain(obj,[],custom);
+                    Tr = obj.(['T_meas_',obj.sourceNames{ii}]);
+                    y1 = G.*Tr + (1 - G).*Tcab; 
+                    obj.customTemp_Flag = false;
+                    plot(obj.freq,y1,'g'), grid on, hold on
+                    text(obj.freq(round(length(obj.freq)/2)),y1(round(length(y1)/2)),'  \leftarrow Custom CAL chain')
+                end
+
+
                 plot(obj.freq,y,color), grid on, hold on
                 xlabel('Frequency (MHz)')
                 ylabel('Source Temperature (K)')
                 title(obj.sourceNames{ii})
 
-                yline(Tr,'r')
-                yline(Tcab,'b')
+%                 yline(Tr,'r')
+%                 yline(Tcab,'b')
+%                 legends
+%                 if ii == 1 , legend(,'Location','Best'); end
+                ax = gca;
+                if ii == 1, legend(ax,legends,'Location','Best'); end
 
-                if ii == 1, legend('T_{source}','T_r','T_{cab}','Location','Best'); end
+
             end
         end
 
@@ -2039,7 +2303,9 @@ classdef REACHcal
             if nargin < 2 || isempty(style), style = 'k*'; end
 
             y = (obj.optStruct.vals - obj.optStruct.min)./(obj.optStruct.max - obj.optStruct.min);
+            y = y.*obj.optStruct.optFlag;
             plot(y,style), grid on, hold on
+            plot(find( obj.optStruct.optFlag== 0),0,'b o');
 
             xTicLab = cell(1,sum(obj.optVect_Nvars));
             for ii = 1:obj.optVect_Ne
@@ -2073,8 +2339,9 @@ classdef REACHcal
             ylabel('Normalised Value')
 
             xtickangle(90);
-            xticks([1:sum(obj.optVect_Nvars)]);
+            xticks(1:sum(obj.optVect_Nvars));
             xticklabels(xTicLab);
+            hold off;
         end
 
         function printOptElementVals(obj)
@@ -2095,22 +2362,9 @@ classdef REACHcal
         function err = err_RIA(obj,S11meas,S11model)
             % err_RIA combines complex and magnitude difference error
 
-%             obj.errorFuncScale = 'lin';
-%             err_complex = obj.err_complexDistance(S11meas,S11model);
-%             err_mag = obj.err_magDistance(S11meas,S11model);
-%             err = complex(err_mag,err_complex);
-
-            w = obj.optW_RIA./norm(obj.optW_RIA,1);
-
-            scaleHandle = @(x) x;
-            if strcmp(obj.errorFuncScale,'dB')
-                scaleHandle = obj.errFuncScaleHandle;
-                obj.errorFuncScale = 'lin';
-            end
-
+            obj.errorFuncScale = 'lin';
             err_complex = obj.errFuncNormHandle(obj.err_complexDistance(S11meas,S11model));
             err_mag = obj.errFuncNormHandle(obj.err_magDistance(S11meas,S11model));
-%             err = scaleHandle(w*[err_complex;err_mag]);
             err = complex(err_complex,err_mag);
 
         end
@@ -2119,6 +2373,7 @@ classdef REACHcal
             % err_complexDistance provides the complex difference-based error
             
             dist = abs(y_meas(:) - y_model(:));
+%             dist = abs(real(y_meas(:)) - real(y_model(:))); % real error distance
             err = obj.errFuncNormHandle(dist);
             err = obj.errFuncScaleHandle(err);
         end
@@ -2127,6 +2382,7 @@ classdef REACHcal
             % err_magDistance provides the magnitude difference error
             
             dist = abs(abs(y_meas(:)) - abs(y_model(:)));
+%             dist = abs(imag(y_meas(:)) - imag(y_model(:))); % imaginary error distance
             err = obj.errFuncNormHandle(dist);
             err = obj.errFuncScaleHandle(err);
         end
@@ -2276,40 +2532,62 @@ classdef REACHcal
         end
 
         % Gain and noise temperature construction
-        function G = calcSourceGain(obj,sourceName)
+        function G = calcSourceGain(obj,sourceName,custom)
             % CALCSOURCEGAIN calculates the transducer gain of the specified source
+            % custom = Gain calculation for custom calibrator chains
 
-            [cableName,loadName] = REACHcal.splitSourceName(sourceName);
-
-            switch cableName
-                case 'c12'
-                    c = obj.c2.network;
-                    loadMS = obj.ms3.network;
-                case 'c25'
-                    c = obj.c10.network;
-                    loadMS = obj.ms4.network;
-                otherwise
-                    [c,loadMS] = deal(TwoPort.empty(1,0));
-            end
 
             % Select constant reference impedance
             Zport = 50;  % Everything in a 50 Ohm environment
-            % Just keep real part of the termination resistor
-            rReal = obj.(loadName).network.Zport2;
-            Gam_R = (rReal - Zport)./(rReal + Zport);       % Just the real part is kept
+            
+            if nargin > 2 && ~isempty(custom)
+                for i = 1:length(custom)
+                    temp_2 = obj.(custom{i}).network.getS(Zport,Zport);
+                    if i > 1
+                        C = cascade([temp_1, temp_2]);
+                        temp_1 = C;
+                    else
+                        temp_1 = temp_2;
+                        if length(custom) == 1, C = temp_2;end
+                    end
 
-            % Cable (between resistive load and reference plane) - include load reactive network, MS3/4, cable, MS1, and MTS semi-rigid
-            rReactive = obj.(loadName).network;
-            rReactive = rReactive.getS(Zport,Zport);
-            if ~isempty(loadMS), loadMS = loadMS.getS(Zport,Zport); end
-            if ~isempty(c), c = c.getS(Zport,Zport); end
-            MS1 = obj.ms1.network.getS(Zport,Zport);
-            SR = obj.sr_mtsj2.network.getS(Zport,Zport);
-            C = cascade([rReactive,loadMS,c,MS1,SR]);
+                end
+                % Just keep real part of the termination resistor
+                rReal = obj.(obj.Temp_el{obj.load_indx}).network.Zport2;
+                Gam_R = (rReal - Zport)./(rReal + Zport);       % Just the real part is kept
+            else
+                [cableName,loadName] = REACHcal.splitSourceName(sourceName);
+
+                switch cableName
+                    case 'c12'
+                        c = obj.c2.network;
+                        loadMS = obj.ms3.network;
+                    case 'c25'
+                        c = obj.c10.network;
+                        loadMS = obj.ms4.network;
+                    otherwise
+                        [c,loadMS] = deal(TwoPort.empty(1,0));
+                end
+
+
+                % Just keep real part of the termination resistor
+                rReal = obj.(loadName).network.Zport2;
+                Gam_R = (rReal - Zport)./(rReal + Zport);       % Just the real part is kept
+
+                % Cable (between resistive load and reference plane) - include load reactive network, MS3/4, cable, MS1, and MTS semi-rigid
+                rReactive = obj.(loadName).network;
+                rReactive = rReactive.getS(Zport,Zport);
+
+                if ~isempty(loadMS), loadMS = loadMS.getS(Zport,Zport); end
+                if ~isempty(c), c = c.getS(Zport,Zport); end
+                MS1 = obj.ms1.network.getS(Zport,Zport);
+                SR = obj.sr_mtsj2.network.getS(Zport,Zport);
+                C = cascade([rReactive,loadMS,c,MS1,SR]);
+            end
             C = C.getS(Zport,Zport);
             S21 = C.d21;
             S11 = C.d11;
-            
+
             % Source reflection
             Gam_S = C.d22 + (C.d12.*C.d21.*Gam_R)./(1 - C.d11.*Gam_R);
 
@@ -2320,6 +2598,7 @@ classdef REACHcal
         function [T,Tr,Tcab] = calcSourceTemp(obj,sourceName)
             % CALCSOURCETEMP calculates the effective temperature of a specified source at the reference plane
 
+            
             [cableName] = REACHcal.splitSourceName(sourceName);
 
             switch cableName
@@ -2338,7 +2617,7 @@ classdef REACHcal
 
         
     end
-
+               
     methods (Static = true, Access = private)
 
         function [cableName,loadName] = splitSourceName(sourceName)

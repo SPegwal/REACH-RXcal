@@ -479,12 +479,12 @@ classdef REACHcal_1
 
     methods
         function obj = REACHcal_1(dataPath,varargin)
-            % REACHcal constructor function
+            % REACHcal_1 constructor function
 
             % Handle inputs
             parseobj = inputParser;
-            parseobj.FunctionName = 'REACHcal';
-            
+            parseobj.FunctionName = 'REACHcal_1';
+            666666666666666666666666666
             p = mfilename("fullpath");
             if nargin < 1 || isempty(dataPath)
                 obj.dataPath = [fileparts(p),'\..\data\2024_01_07_19_00\'];
@@ -498,7 +498,7 @@ classdef REACHcal_1
             obj.dataPathLabSources = [fileparts(p),'\..\data\lab_sources\'];
 
             % Name-value pairs
-            typeValidation_elementStruct = @(x) validateattributes(x,{'struct'},{},'REACHcal','inputStruct');
+            typeValidation_elementStruct = @(x) validateattributes(x,{'struct'},{},'REACHcal_1','inputStruct');
 
             for ii = 1:length(obj.optVectElements)
                 elName = obj.optVectElements{ii};
@@ -1223,7 +1223,7 @@ classdef REACHcal_1
 
             if nargin < 3 || isempty(interpFlag), interpFlag = true; end
 
-            assert(ismember(sourceName,obj.sourceNames),'Unknown source name - check REACHcal.sourceNames')
+            assert(ismember(sourceName,obj.sourceNames),'Unknown source name - check REACHcal_1.sourceNames')
             pthRead = obj.dataPathLabSources;
             if contains(sourceName,'c2')
                 sourceName = replace(sourceName,'c2','c12');
@@ -1252,7 +1252,7 @@ classdef REACHcal_1
 
             if nargin < 3 || isempty(interpFlag), interpFlag = true; end
 
-            assert(ismember(sourceName,obj.sourceNames),'Unknown source name - check REACHcal.sourceNames')
+            assert(ismember(sourceName,obj.sourceNames),'Unknown source name - check REACHcal_1.sourceNames')
             pthRead = obj.dataPath;
             if obj.folderFormat == 1, pthRead = [pthRead,sourceName,'\']; end
             
@@ -1292,7 +1292,7 @@ classdef REACHcal_1
         function PSDstruct = readSourcePSD(obj,sourceName)
             % READSOURCEPSD reads the PSD data into the structure format
 
-            assert(ismember(sourceName,obj.sourceNames),'Unknown source name - check REACHcal.sourceNames')
+            assert(ismember(sourceName,obj.sourceNames),'Unknown source name - check REACHcal_1.sourceNames')
 
             fileNames = {'load','noise','source'};
 
@@ -1768,7 +1768,7 @@ classdef REACHcal_1
         function writeTouchStone(obj,path)
             % writeTouchStone writes the different element models to touchstone files in the folder: path
 
-            if nargin < 2 || isempty(path), path = [pwd,'\REACHcal_snp_',char(datetime('now','format','yyyyMMdd''T''HHmmss'))]; end
+            if nargin < 2 || isempty(path), path = [pwd,'\REACHcal_1_snp_',char(datetime('now','format','yyyyMMdd''T''HHmmss'))]; end
 
             if ~isequal(path(end),'\'), path = [path,'\']; end
 
@@ -2280,7 +2280,7 @@ classdef REACHcal_1
         function G = calcSourceGain(obj,sourceName)
             % CALCSOURCEGAIN calculates the transducer gain of the specified source
 
-            [cableName,loadName] = REACHcal.splitSourceName(sourceName);
+            [cableName,loadName] = REACHcal_1.splitSourceName(sourceName);
 
             switch cableName
                 case 'c2'
@@ -2321,7 +2321,7 @@ classdef REACHcal_1
         function [T,Tr,Tcab] = calcSourceTemp(obj,sourceName)
             % CALCSOURCETEMP calculates the effective temperature of a specified source at the reference plane
 
-            [cableName] = REACHcal.splitSourceName(sourceName);
+            [cableName] = REACHcal_1.splitSourceName(sourceName);
 
             switch cableName
                 case 'c2'
